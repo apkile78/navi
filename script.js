@@ -159,7 +159,6 @@ function displaySavedSites() {
         link.className = "link";
         link.textContent = site;
 
-        // ⭐ NEW BEHAVIOR: fill search bar + close menu (NO loading)
         link.onclick = () => {
             urlInput.value = site;
             searchContainer.classList.remove("active");
@@ -231,7 +230,6 @@ function displayWorkingSites() {
         link.className = "link";
         link.textContent = url;
 
-        // ⭐ NEW BEHAVIOR: fill search bar + close menu (NO loading)
         link.onclick = () => {
             urlInput.value = url;
             searchContainer.classList.remove("active");
@@ -244,9 +242,9 @@ function displayWorkingSites() {
 
 detectWorkingSites();
 
-// POPUP ENGINES
+// ABOUT:BLANK POPUP ENGINE
 function openAboutBlank(url) {
-    const win = window.open("about:blank", "_blank");
+    const win = window.open("", "_blank");
 
     if (!win) {
         const a = document.createElement("a");
@@ -259,7 +257,6 @@ function openAboutBlank(url) {
         return;
     }
 
-    win.document.open();
     win.document.write(`
         <!DOCTYPE html>
         <html>
@@ -287,9 +284,11 @@ function openAboutBlank(url) {
         </body>
         </html>
     `);
+
     win.document.close();
 }
 
+// BLOB POPUP (unchanged)
 function openBlobPopup(url) {
     const html = `
         <!DOCTYPE html>
@@ -324,9 +323,16 @@ function openBlobPopup(url) {
     window.open(blobUrl, "_blank");
 }
 
-// POPUP BUTTONS
+// ⭐ FIXED POPT BUTTON (prevents popup‑from‑popup blocking)
 function clck() {
     const url = location.href;
+
+    // If already inside a popup, don't try to open another popup
+    if (window.opener) {
+        window.location.href = url;
+        return;
+    }
+
     if (popupMode === "about") openAboutBlank(url);
     else openBlobPopup(url);
 }
@@ -347,7 +353,7 @@ closeBtn.onclick = closeSearch;
 clckBtn.onclick = clck;
 vtprBtn.onclick = vtpr;
 
-// ⭐ NEW: mnu button toggles menu open/close
+// MENU TOGGLE
 openBtn.onclick = () => {
     searchContainer.classList.toggle("active");
 };
