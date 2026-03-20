@@ -46,7 +46,7 @@
         background: #222;
     }
 
-    /* MODE TOGGLE BUTTONS (abt/blb only) */
+    /* POPUP MODE BUTTONS */
     .modeToggle {
         background: #000;
         color: #fff;
@@ -112,7 +112,8 @@
         margin: 5px 0;
         border-radius: 4px;
         display: flex;
-        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
         cursor: pointer;
         color: #fff;
     }
@@ -120,9 +121,18 @@
     .deleteBtn {
         color: #f33;
         cursor: pointer;
+        margin-left: auto;
     }
 
-    /* AUTOCOMPLETE DROPDOWN — FIXED z-index */
+    /* GAME ICONS */
+    .gameIcon {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        object-fit: cover;
+    }
+
+    /* AUTOCOMPLETE — FIXED z-index */
     #autocomplete {
         position: absolute;
         top: 50px;
@@ -132,9 +142,7 @@
         max-height: calc(100vh - 60px);
         overflow-y: auto;
         border-radius: 4px;
-
-        /* ⭐ FIX: autocomplete no longer blocks blb button */
-        z-index: 0;
+        z-index: 0; /* ⭐ FIX: no longer blocks blb button */
     }
 
     .autoItem {
@@ -161,10 +169,8 @@
         <button id="clckBtn">popt</button>
         <button id="vtprBtn">vew</button>
 
-        <!-- ⭐ tstBtn is NOT a modeToggle -->
         <button id="tstBtn">tst (0/0)</button>
 
-        <!-- ⭐ ONLY THESE TWO ARE popup mode toggles -->
         <button id="abtBtn" class="modeToggle active">abt:blnk</button>
         <button id="blbBtn" class="modeToggle">blb</button>
 
@@ -188,7 +194,7 @@
     <div id="viewer"></div>
 
     <script src="siteDB.js?v=1"></script>
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=8"></script>
 
 </body>
 </html>
