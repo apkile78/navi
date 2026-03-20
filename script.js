@@ -7,13 +7,17 @@ const savedContainer = document.getElementById("savedSites");
 const workingContainer = document.getElementById("workingSites");
 const viewer = document.getElementById("viewer");
 const autoBox = document.getElementById("autocomplete");
+const tstBtn = document.getElementById("tstBtn");
 
 let embedMode = "iframe";
 let popupMode = "about";
 let currentUrl = "";
 let coreEl = null;
 
-let workingSites = [];   // ⭐ REQUIRED FIX
+let workingSites = [];
+let testingPaused = false;
+let testingInProgress = false;
+let testedCount = 0;
 
 // =========================================================
 //  MENU TOGGLE
@@ -193,7 +197,7 @@ function displaySavedSites() {
 displaySavedSites();
 
 // =========================================================
-//  WORKING SITE DETECTION (FAST VERSION)
+//  WORKING SITE DETECTION (PAUSE + RESUME + LIVE UPDATE)
 // =========================================================
 
 function testSite(url) {
@@ -205,7 +209,7 @@ function testSite(url) {
         const timeout = setTimeout(() => {
             iframe.remove();
             resolve(false);
-        }, 800); // faster timeout
+        }, 800);
 
         iframe.onload = () => {
             clearTimeout(timeout);
@@ -224,41 +228,111 @@ function testSite(url) {
 }
 
 async function detectWorkingSites() {
-    workingContainer.innerHTML = "Testing sites...";
+    if (testingInProgress) return;
 
-    const tests = siteDB.map(site =>
-        testSite(site.url).then(ok => ({ url: site.url, ok }))
-    );
+    testingInProgress = true;
+    testingPaused = false;
 
-    const results = await Promise.all(tests);
+    workingSites = [];
+    testedCount = 0;
 
-    workingSites = results
-        .filter(r => r.ok)
-        .map(r => r.url);
+    const total = siteDB.length;
+    const batchSize = 15;
 
-    displayWorkingSites();
-}
+    updateTstButton();
 
-function displayWorkingSites() {
     workingContainer.innerHTML = "";
-    workingSites.forEach(url => {
-        const item = document.createElement("div");
-        item.className = "savedItem";
 
-        const link = document.createElement("span");
-        link.className = "link";
-        link.textContent = url;
+    for (let i = 0; i < total; i += batchSize) {
 
-        link.onclick = () => {
-            urlInput.value = url;
-            searchContainer.classList.remove("active");
-        };
+        if (testingPaused) {
+            testingInProgress = false;
+            return;
+        }
 
-        item.appendChild(link);
-        workingContainer.appendChild(item);
-    });
+        const batch = siteDB.slice(i, i + batchSize);
+
+        const results = await Promise.all(
+            batch.map(site =>
+                testSite(site.url).then(ok => ({ url: site.url, ok }))
+            )
+        );
+
+        results.forEach(r => {
+            testedCount++;
+            if (r.ok) {
+                workingSites.push(r.url);
+                addWorkingSiteToUI(r.url);
+            }
+        });
+
+        updateTstButton();
+
+        await new Promise(res => setTimeout(res, 50));
+    }
+
+    testingInProgress = false;
+    updateTstButton(true);
 }
 
+function addWorkingSiteToUI(url) {
+    const item = document.createElement("div");
+    item.className = "savedItem";
+
+    const link = document.createElement("span");
+    link.className = "link";
+    link.textContent = url;
+
+    link.onclick = () => {
+        urlInput.value = url;
+        searchContainer.classList.remove("active");
+    };
+
+    item.appendChild(link);
+    workingContainer.appendChild(item);
+}
+
+function updateTstButton(done = false) {
+    const total = siteDB.length;
+
+    if (done) {
+        tstBtn.textContent = `tst (${testedCount}/${total})`;
+        tstBtn.classList.remove("active");
+        tstBtn.style.background = "#000";
+        tstBtn.style.color = "#fff";
+        return;
+    }
+
+    tstBtn.textContent = `tst (${testedCount}/${total})`;
+
+    if (testingInProgress && !testingPaused) {
+        tstBtn.classList.add("active");
+        tstBtn.style.background = "#fff";
+        tstBtn.style.color = "#000";
+    } else {
+        tstBtn.classList.remove("active");
+        tstBtn.style.background = "#000";
+        tstBtn.style.color = "#fff";
+    }
+}
+
+// =========================================================
+//  TST BUTTON (PAUSE / RESUME)
+// =========================================================
+tstBtn.onclick = () => {
+    if (!testingInProgress) {
+        detectWorkingSites();
+    } else {
+        testingPaused = !testingPaused;
+        updateTstButton();
+
+        if (!testingPaused) {
+            detectWorkingSites();
+        }
+    }
+};
+
+// Start testing automatically
 detectWorkingSites();
 
 // =========================================================
