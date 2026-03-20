@@ -13,7 +13,7 @@
         overflow: hidden;
     }
 
-    /* LOCKED MODE (main page only) */
+    /* LOCKED MODE */
     body.locked #topBar,
     body.locked #viewer,
     body.locked #searchContainer,
@@ -22,16 +22,16 @@
     }
 
     /* UI HIDDEN MODE */
-    /* Keep topBar visible, but hide everything inside EXCEPT #openBtn */
     body.uiHidden #topBar {
         display: flex !important;
     }
 
+    /* Hide everything EXCEPT mnu */
     body.uiHidden #topBar > *:not(#openBtn) {
         display: none !important;
     }
 
-    /* mnu stays in place, invisible until hovered */
+    /* mnu stays visible but invisible until hovered */
     body.uiHidden #openBtn {
         display: inline-block !important;
         opacity: 0;
@@ -52,6 +52,15 @@
     /* Viewer stays visible */
     body.uiHidden #viewer {
         display: block !important;
+    }
+
+    /* ⭐ FIX: When uiHidden is removed, restore everything */
+    body:not(.uiHidden) #topBar > * {
+        display: inline-block !important;
+    }
+
+    body:not(.uiHidden) #urlInput {
+        display: flex !important;
     }
 
     /* TOP BAR */
@@ -146,24 +155,7 @@
         transform: translateX(0);
     }
 
-    /* SAVED + WORKING SITES LIST */
-    .savedItem {
-        background: #111;
-        padding: 8px;
-        margin: 5px 0;
-        border-radius: 4px;
-        display: flex;
-        justify-content: space-between;
-        cursor: pointer;
-        color: #fff;
-    }
-
-    .deleteBtn {
-        color: #f33;
-        cursor: pointer;
-    }
-
-    /* AUTOCOMPLETE DROPDOWN */
+    /* AUTOCOMPLETE */
     #autocomplete {
         position: absolute;
         top: 50px;
@@ -202,11 +194,9 @@
         <button id="clckBtn">popt</button>
         <button id="vtprBtn">vew</button>
 
-        <!-- Popup mode toggles -->
         <button id="abtBtn" class="modeToggle active">abt:blnk</button>
         <button id="blbBtn" class="modeToggle">blb</button>
 
-        <!-- Embed mode toggles -->
         <div class="modeBtn active" data-mode="iframe">Iframe</div>
         <div class="modeBtn" data-mode="object">Object</div>
         <div class="modeBtn" data-mode="embed">Embed</div>
