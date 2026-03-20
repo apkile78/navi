@@ -346,7 +346,11 @@ saveBtn.onclick = saveSite;
 closeBtn.onclick = closeSearch;
 clckBtn.onclick = clck;
 vtprBtn.onclick = vtpr;
-openBtn.onclick = () => searchContainer.classList.add("active");
+
+// ⭐ NEW: mnu button toggles menu open/close
+openBtn.onclick = () => {
+    searchContainer.classList.toggle("active");
+};
 
 // KEYBOARD SHORTCUT
 document.addEventListener("keydown", e => {
