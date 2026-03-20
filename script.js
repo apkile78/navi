@@ -184,7 +184,7 @@ function displaySavedSites() {
         del.className = "deleteBtn";
         del.textContent = "x";
         del.onclick = e => {
-            e.stopPropagation();
+           e.stopPropagation();
             deleteSite(index);
         };
 
@@ -333,24 +333,36 @@ tstBtn.onclick = () => {
 };
 
 // =========================================================
-//  POPUP MODE (FIXED popt BEHAVIOR)
+//  POPUP MODE (FIXED — NO WHITE OUTLINE)
 // =========================================================
 clckBtn.onclick = () => {
     const navUrl = location.origin + location.pathname;
 
+    const popupHTML = `
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background: #000;
+                overflow: hidden;
+            }
+            iframe {
+                width: 100vw;
+                height: 100vh;
+                border: none;
+            }
+        </style>
+        <iframe src="${navUrl}"></iframe>
+    `;
+
     if (popupMode === "about") {
         const win = window.open("about:blank", "_blank");
         if (win) {
-            win.document.write(`
-                <iframe src="${navUrl}" style="width:100%;height:100%;border:none;"></iframe>
-            `);
+            win.document.write(popupHTML);
             win.document.close();
         }
     } else {
-        const blob = new Blob([
-            `<iframe src="${navUrl}" style="width:100%;height:100%;border:none;"></iframe>`
-        ], { type: "text/html" });
-
+        const blob = new Blob([popupHTML], { type: "text/html" });
         window.open(URL.createObjectURL(blob), "_blank");
     }
 };
@@ -365,7 +377,23 @@ vtprBtn.onclick = () => {
 
     if (popupMode === "about") window.open(url, "_blank");
     else {
-        const blob = new Blob([`<iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>`], { type: "text/html" });
+        const blob = new Blob([`
+            <style>
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    background: #000;
+                    overflow: hidden;
+                }
+                iframe {
+                    width: 100vw;
+                    height: 100vh;
+                    border: none;
+                }
+            </style>
+            <iframe src="${url}"></iframe>
+        `], { type: "text/html" });
+
         window.open(URL.createObjectURL(blob), "_blank");
     }
 };
