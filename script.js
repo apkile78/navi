@@ -139,20 +139,6 @@ document.addEventListener("keydown", e => {
 });
 
 // =========================================================
-//  ICON RESOLVER (OPTION A)
-// =========================================================
-function resolveIcon(site) {
-    if (site.icon && site.icon !== "auto") return site.icon;
-
-    try {
-        const url = new URL(site.url);
-        return url.origin + "/favicon.ico";
-    } catch {
-        return "fallback.png";
-    }
-}
-
-// =========================================================
 //  SAVED SITES
 // =========================================================
 function saveSite() {
@@ -185,10 +171,6 @@ function displaySavedSites() {
         const item = document.createElement("div");
         item.className = "savedItem";
 
-        const icon = document.createElement("img");
-        icon.className = "gameIcon";
-        icon.src = resolveIcon({url: site, icon: "auto"});
-
         const link = document.createElement("span");
         link.className = "link";
         link.textContent = site;
@@ -206,7 +188,6 @@ function displaySavedSites() {
             deleteSite(index);
         };
 
-        item.appendChild(icon);
         item.appendChild(link);
         item.appendChild(del);
         savedContainer.appendChild(item);
@@ -216,9 +197,8 @@ function displaySavedSites() {
 displaySavedSites();
 
 // =========================================================
-//  WORKING SITE DETECTION (PAUSE + RESUME)
+//  WORKING SITE DETECTION
 // =========================================================
-
 function testSite(url) {
     return new Promise(resolve => {
         const iframe = document.createElement("iframe");
@@ -298,10 +278,6 @@ function addWorkingSiteToUI(url) {
     const item = document.createElement("div");
     item.className = "savedItem";
 
-    const icon = document.createElement("img");
-    icon.className = "gameIcon";
-    icon.src = resolveIcon({url, icon:"auto"});
-
     const link = document.createElement("span");
     link.className = "link";
     link.textContent = url;
@@ -311,7 +287,6 @@ function addWorkingSiteToUI(url) {
         searchContainer.classList.remove("active");
     };
 
-    item.appendChild(icon);
     item.appendChild(link);
     workingContainer.appendChild(item);
 }
@@ -335,7 +310,7 @@ function updateTstButton(done = false) {
 }
 
 // =========================================================
-//  TST BUTTON (PAUSE / RESUME)
+//  TST BUTTON
 // =========================================================
 tstBtn.onclick = () => {
     if (!testingInProgress) {
@@ -351,7 +326,7 @@ tstBtn.onclick = () => {
 };
 
 // =========================================================
-//  POPUP MODE TOGGLE (abt/blb)
+//  POPUP MODE TOGGLE
 // =========================================================
 abtBtn.onclick = () => {
     popupMode = "about";
@@ -366,7 +341,7 @@ blbBtn.onclick = () => {
 };
 
 // =========================================================
-//  POPUP (popt) — NAVIGATOR POPUP
+//  POPUP (popt)
 // =========================================================
 clckBtn.onclick = () => {
     const navUrl = location.origin + location.pathname;
@@ -401,7 +376,7 @@ clckBtn.onclick = () => {
 };
 
 // =========================================================
-//  VIEW POPUP (vew) — CURRENT SITE POPUP
+//  VIEW POPUP (vew)
 // =========================================================
 vtprBtn.onclick = () => {
     let url = currentUrl || urlInput.value.trim();
