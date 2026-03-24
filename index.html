@@ -1,182 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Navigator</title>
+<meta charset="UTF-8">
+<title>Your Game Navigator</title>
 
-    <style>
-    body {
-        margin: 0;
-        background: #000;
-        color: #fff;
-        font-family: Arial, sans-serif;
-        overflow: hidden;
-    }
+<style>
+/* ————— EXISTING STYLES ————— */
 
-    #topBar {
-        height: 50px;
-        background: #000;
-        display: flex;
-        align-items: center;
-        padding: 0 10px;
-        gap: 10px;
-    }
+body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    font-family: sans-serif;
+}
 
-    #urlInput {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #444;
-        background: #000;
-        color: #fff;
-        border-radius: 4px;
-        outline: none;
-    }
+#topBar {
+    width: 100%;
+    height: 60px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    box-sizing: border-box;
+    transition: 0.25s ease;
+}
 
-    button {
-        background: #111;
-        color: #fff;
-        border: 1px solid #444;
-        padding: 8px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+#sidebar {
+    width: 260px;
+    background: #111;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 10px;
+    box-sizing: border-box;
+    z-index: 9998;
+}
 
-    button:hover {
-        background: #222;
-    }
+#closeBtn, #hdeBtn {
+    margin-right: 6px;
+}
 
-    .modeToggle {
-        background: #000;
-        color: #fff;
-        border: 1px solid #444;
-        padding: 6px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+/* ————— NEW UI-HIDE SYSTEM ————— */
 
-    .modeToggle.active {
-        background: #fff !important;
-        color: #000 !important;
-        border-color: #fff !important;
-    }
+/* Slide top bar up when hidden */
+body.uiHidden #topBar {
+    transform: translateY(-60px);
+}
 
-    .modeBtn {
-        padding: 6px 10px;
-        background: #000;
-        border-radius: 4px;
-        cursor: pointer;
-        color: #fff;
-        border: 1px solid #444;
-    }
+/* mnu button (bottom-right, invisible unless hovered) */
+#mnuReveal {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    font-size: 12px;
+    opacity: 0;               /* fully invisible */
+    pointer-events: none;     /* inactive unless UI hidden */
+    background: #111;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 4px;
+    transition: opacity 0.15s;
+    z-index: 9999;
+}
 
-    .modeBtn.active {
-        background: #fff !important;
-        color: #000 !important;
-        border-color: #fff !important;
-    }
+/* When UI is hidden, the button becomes hover-active */
+body.uiHidden #mnuReveal {
+    pointer-events: auto;
+}
 
-    #viewer {
-        width: 100vw;
-        height: calc(100vh - 50px);
-        background: #000;
-    }
+/* Only visible when hovered */
+body.uiHidden #mnuReveal:hover {
+    opacity: 1;
+}
 
-    #searchContainer {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 350px;
-        height: 100vh;
-        background: #000;
-        padding: 10px;
-        transform: translateX(-360px);
-        transition: 0.2s;
-        overflow-y: auto;
-        z-index: 10;
-        color: #fff;
-    }
-
-    #searchContainer.active {
-        transform: translateX(0);
-    }
-
-    .savedItem {
-        background: #111;
-        padding: 8px;
-        margin: 5px 0;
-        border-radius: 4px;
-        display: flex;
-        justify-content: space-between;
-        cursor: pointer;
-        color: #fff;
-    }
-
-    .deleteBtn {
-        color: #f33;
-        cursor: pointer;
-    }
-
-    #autocomplete {
-        position: absolute;
-        top: 50px;
-        left: 10px;
-        width: calc(100% - 20px);
-        background: #000;
-        max-height: calc(100vh - 60px);
-        overflow-y: auto;
-        border-radius: 4px;
-        z-index: 0; /* FIX: no longer blocks blb */
-    }
-
-    .autoItem {
-        padding: 8px;
-        border-bottom: 1px solid #222;
-        cursor: pointer;
-        color: #fff;
-    }
-
-    .autoItem:hover {
-        background: #111;
-    }
-    </style>
+</style>
 </head>
 
 <body>
 
-    <div id="topBar">
-        <input id="urlInput" placeholder="Enter URL or search..." />
+<!-- ————— TOP BAR ————— -->
+<div id="topBar">
+    <button id="menuBtn">Menu</button>
+    <button id="randomBtn">Random</button>
+    <button id="searchBtn">Search</button>
+</div>
 
-        <button id="goBtn">go</button>
-        <button id="saveBtn">sve</button>
-        <button id="openBtn">mnu</button>
-        <button id="clckBtn">popt</button>
-        <button id="vtprBtn">vew</button>
+<!-- ————— SIDEBAR ————— -->
+<div id="sidebar" style="display:none;">
+    <button id="closeBtn">Close</button>
+    <button id="hdeBtn">hde</button>
+    <input id="searchInput" placeholder="Search...">
+    <div id="results"></div>
+</div>
 
-        <button id="tstBtn">tst (0/0)</button>
+<!-- ————— GAME FRAME ————— -->
+<iframe id="gameFrame" src="" style="width:100%;height:calc(100vh - 60px);border:none;"></iframe>
 
-        <button id="abtBtn" class="modeToggle active">abt:blnk</button>
-        <button id="blbBtn" class="modeToggle">blb</button>
+<!-- ————— INVISIBLE MNU BUTTON ————— -->
+<button id="mnuReveal">mnu</button>
 
-        <div class="modeBtn active" data-mode="iframe">Iframe</div>
-        <div class="modeBtn" data-mode="object">Object</div>
-        <div class="modeBtn" data-mode="embed">Embed</div>
-    </div>
-
-    <div id="autocomplete"></div>
-
-    <div id="searchContainer">
-        <button id="closeBtn">Close</button>
-
-        <h2>Saved Sites</h2>
-        <div id="savedSites"></div>
-
-        <h2>Working Sites</h2>
-        <div id="workingSites"></div>
-    </div>
-
-    <div id="viewer"></div>
-
-    <script src="siteDB.js?v=1"></script>
-    <script src="script.js?v=clean"></script>
-
+<script src="script.js"></script>
 </body>
 </html>
