@@ -16,6 +16,24 @@ body {
 }
 
 /* ——————————————————————————————
+   BUTTON STYLING
+—————————————————————————————— */
+button {
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    padding: 6px 10px;
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+button.active {
+    background: #fff;
+    color: #000;
+    border: 1px solid #000;
+}
+
+/* ——————————————————————————————
    TOP BAR
 —————————————————————————————— */
 #topBar {
@@ -26,14 +44,50 @@ body {
     align-items: center;
     padding: 0 10px;
     box-sizing: border-box;
+    gap: 6px;
     transition: 0.25s ease;
 }
-#topBar button {
-    margin-right: 8px;
+
+/* Search bar (leftmost) */
+#urlInput {
+    flex: 1;
+    padding: 6px;
+    background: #000;
+    border: 1px solid #fff;
+    color: #fff;
+}
+
+/* Tiny spacing between middle group and embed group */
+.group-gap {
+    width: 4px;
 }
 
 /* ——————————————————————————————
-   SIDEBAR / SEARCH MENU
+   AUTOCOMPLETE (under top bar)
+—————————————————————————————— */
+#autocomplete {
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    width: calc(100% - 20px);
+    max-height: 200px;
+    overflow-y: auto;
+    background: #111;
+    border: 1px solid #333;
+    z-index: 9997;
+}
+
+.autoItem {
+    padding: 6px;
+    border-bottom: 1px solid #333;
+    cursor: pointer;
+}
+.autoItem:hover {
+    background: #333;
+}
+
+/* ——————————————————————————————
+   SIDEBAR
 —————————————————————————————— */
 #searchContainer {
     width: 300px;
@@ -51,16 +105,7 @@ body {
     left: 0;
 }
 
-#urlInput, #searchInput {
-    width: 100%;
-    padding: 6px;
-    margin: 6px 0;
-    background: #222;
-    border: 1px solid #444;
-    color: #fff;
-}
-
-#autocomplete, #results, #savedSites, #workingSites {
+#savedSites, #workingSites {
     max-height: 200px;
     overflow-y: auto;
     background: #181818;
@@ -68,12 +113,12 @@ body {
     margin-top: 6px;
 }
 
-.autoItem, .savedItem {
+.savedItem {
     padding: 6px;
     border-bottom: 1px solid #333;
     cursor: pointer;
 }
-.autoItem:hover, .savedItem:hover {
+.savedItem:hover {
     background: #333;
 }
 
@@ -93,7 +138,7 @@ body {
 }
 
 /* ——————————————————————————————
-   NEW UI-HIDE SYSTEM
+   UI-HIDE SYSTEM
 —————————————————————————————— */
 body.uiHidden #topBar {
     transform: translateY(-60px);
@@ -107,8 +152,8 @@ body.uiHidden #topBar {
     font-size: 12px;
     opacity: 0;
     pointer-events: none;
-    background: #111;
-    border: 1px solid #444;
+    background: #000;
+    border: 1px solid #fff;
     color: #fff;
     border-radius: 4px;
     transition: opacity 0.15s;
@@ -130,37 +175,36 @@ body.uiHidden #mnuReveal:hover {
      TOP BAR
 —————————————————————————————— -->
 <div id="topBar">
-    <button id="openBtn">Menu</button>
+
+    <!-- LEFT GROUP -->
+    <input id="urlInput" placeholder="Enter URL...">
     <button id="goBtn">Go</button>
     <button id="saveBtn">Save</button>
+    <button id="openBtn">Menu</button>
+
+    <!-- MIDDLE GROUP -->
     <button id="tstBtn">tst</button>
-
-    <!-- embed mode buttons -->
-    <button class="modeBtn active" data-mode="iframe">iframe</button>
-    <button class="modeBtn" data-mode="object">object</button>
-    <button class="modeBtn" data-mode="embed">embed</button>
-
-    <!-- popup mode -->
-    <button id="abtBtn" class="active">about</button>
-    <button id="blbBtn">blob</button>
-
-    <!-- popup buttons -->
     <button id="clckBtn">popt</button>
     <button id="vtprBtn">vew</button>
+
+    <div class="group-gap"></div>
+
+    <!-- RIGHT GROUP (embed modes) -->
+    <button class="modeBtn active" data-mode="iframe">iframe</button>
+    <button class="modeBtn" data-mode="object">js</button>
+    <button class="modeBtn" data-mode="embed">embed</button>
+
 </div>
 
+<!-- AUTOCOMPLETE DROPDOWN -->
+<div id="autocomplete"></div>
+
 <!-- ——————————————————————————————
-     SIDEBAR / SEARCH MENU
+     SIDEBAR
 —————————————————————————————— -->
 <div id="searchContainer">
     <button id="closeBtn">Close</button>
     <button id="hdeBtn">hde</button>
-
-    <input id="urlInput" placeholder="Enter URL...">
-    <input id="searchInput" placeholder="Search sites...">
-
-    <div id="autocomplete"></div>
-    <div id="results"></div>
 
     <h3>Saved Sites</h3>
     <div id="savedSites"></div>
