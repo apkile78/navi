@@ -46,7 +46,7 @@ button.active {
     box-sizing: border-box;
     gap: 6px;
     transition: 0.25s ease;
-    overflow: visible; /* IMPORTANT FIX */
+    overflow: visible;
 }
 
 /* Search bar (leftmost) */
@@ -68,14 +68,14 @@ button.active {
 —————————————————————————————— */
 #autocomplete {
     position: absolute;
-    top: 60px; /* directly under top bar */
+    top: 60px;
     left: 10px;
     width: calc(100% - 20px);
     max-height: 250px;
     overflow-y: auto;
     background: #111;
     border: 1px solid #333;
-    z-index: 9999; /* stays above everything */
+    z-index: 99999;
 }
 
 .autoItem {
@@ -136,8 +136,8 @@ button.active {
     width: 100%;
     height: calc(100vh - 60px);
     background: #000;
-    position: relative; /* IMPORTANT FIX */
-    z-index: 1;         /* keeps autocomplete above */
+    position: relative;
+    z-index: 1;
 }
 
 /* ——————————————————————————————
@@ -186,7 +186,6 @@ body.uiHidden #mnuReveal:hover {
     <button id="openBtn">Menu</button>
 
     <!-- MIDDLE GROUP -->
-    <button id="tstBtn">tst</button>
     <button id="clckBtn">popt</button>
     <button id="vtprBtn">vew</button>
 
